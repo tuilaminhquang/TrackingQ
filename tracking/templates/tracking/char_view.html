@@ -1,0 +1,106 @@
+
+{% extends "users/base.html" %}
+{% block title %} Hien Nha Coffee {% endblock title%}
+{%block css%}
+
+{%endblock%}
+{% block content %}
+    <div class="alert alert-light d-flex align-items-center justify-content-between" style="gap: 3px" >
+    <div class="d-flex align-items-center" style="gap: 3px" >
+
+        <div class="block-chevron  pre-week btn-light" onclick="location.href=`?start_date=${formattedTodayPre}`;" style="padding: 5px">
+          <i class="fa-solid fa-chevron-left previous"></i>
+        </div>
+        <div style= "outline: 2px solid #eeeee4; padding: 5px; color: black; font-weight: bold">
+          {{start}} - {{end}}
+        </div>
+        <div class="block-chevron  btn-light" onclick="location.href=`?start_date=${formattedTodayNext}`;" style="; padding: 5px;">
+          <i class="fa-solid fa-chevron-right previous"></i>
+        </div>
+    </div>
+
+        <button class="btn btn-outline-primary" onclick="exportExcel()">Xuất Excel</button>
+
+    </div>
+    <table class="table">
+
+    <thead>
+        <tr>
+          <th scope="col">Tên nhân viên</th>
+          <th scope="col">Số giờ làm</th>
+          <th scope="col">Lương theo giờ</th>
+          <th scope="col">Tổng tiền</th>
+        </tr>
+    </thead>
+      <tbody>
+          {%for u in user_logs%}
+        <tr>
+            <th scope="row">{{u.full_name}}</th>
+            <th scope="row">{{u.sum_hour|floatformat}} h </th>
+            <th scope="row">{{u.salary|floatformat}} VNĐ </th>
+            <th scope="row">{{u.sum_salary|floatformat}} VNĐ </th>
+        </tr>
+        {%endfor%}
+      
+  
+      </tbody>
+    </table>
+        {% comment %} <canvas id="myChart" style="width:100%;max-width:700px"></canvas> {% endcomment %}
+
+</body>
+<script>
+  var current_date = new Date('{{start}}');
+  current_date.setDate(current_date.getDate() - 7);
+  let yyyy = current_date.getFullYear();
+  let mm = current_date.getMonth() + 1; // Months start at 0!
+  let dd = current_date.getDate();
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+  const formattedTodayPre = yyyy + '-' + mm + '-' + dd;
+  current_date.setDate(current_date.getDate() + 14);
+  yyyy = current_date.getFullYear();
+  mm = current_date.getMonth() + 1; // Months start at 0!
+  dd = current_date.getDate();
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+  const formattedTodayNext = yyyy + '-' + mm + '-' + dd;
+  let formattedCurrentDay = new Date('{{start}}');
+  yyyy = formattedCurrentDay.getFullYear();
+  mm = formattedCurrentDay.getMonth() + 1; // Months start at 0!
+  dd = formattedCurrentDay.getDate();
+  if (dd < 10) dd = '0' + dd;
+  if (mm < 10) mm = '0' + mm;
+  formattedCurrentDay = yyyy + '-' + mm + '-' + dd;
+  const exportExcel = () => {
+    window.open(`http://127.0.0.1:8000/chart-view/?start_date=${formattedCurrentDay}&export_excel=true`);
+
+  }
+
+</script>
+<style>
+  body{
+    box-sizing: border-box;
+  }
+  .alert{
+    height: 100px;
+  }
+  a {
+    text-decoration: none !important;
+    display: inline-block;
+    padding: 8px 16px;
+  }
+  .block-chevron {
+    cursor: pointer;
+    outline: 2px solid #eeeee4;
+  }
+  .previous{
+    font-size: 15px;
+  }
+  .block-chevron:hover{
+    outline: 2px solid #d6d6cd;
+  
+  }
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{%endblock%}

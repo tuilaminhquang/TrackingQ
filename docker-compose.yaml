@@ -1,0 +1,37 @@
+version: '3'
+services:
+  postgressds_admin:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: 'timesheetdb'
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: 'admin'
+      POSTGRES_ROOT_PASSWORD: 'admin'
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+
+  redis:
+    image: redis:6.2
+    restart: always
+    ports:
+      - 6379:6379
+    command: redis-server --loglevel warning
+    volumes:
+      - ./data:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=root
+    restart: always
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+      - ~/data:/var/lib/rabbitmq/
+volumes:
+  postgres:

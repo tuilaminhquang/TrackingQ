@@ -1,0 +1,208 @@
+{% extends "tracking/base.html" %}
+{%block css%}
+<style>
+.col-md-4{
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.col-md-3{
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.col-md-2{
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+</style>
+{%endblock%}
+{% block content %}
+<legend>Thông tin nhân viên</legend>
+
+<form class="form-horizontal" method="post">
+{% csrf_token %}
+<div class="form-group">
+  <label class="col-md-4 control-label .padding-0" for="name">Tên nhân viên</label>  
+  <div class="col-md-4 .padding-0">
+  <input id="name" name="name" placeholder="Họ và tên" class="form-control input-md"  type="text" value="{{employee.name}}">
+    
+  </div>
+</div>      
+<div class="form-group">
+    <label class="col-md-4 .padding-0 control-label" for="phone">Số điện thoại</label>  
+    <div class="col-md-4 .padding-0 ">
+    <input id="phone" name="phone" placeholder="Số di động" class="form-control input-md" type="text" value="{{employee.contact}}">
+      
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-md-4  .padding-0 control-label" for="email">Email</label>  
+    <div class="col-md-4 .padding-0">
+    <input id="email" name="email" placeholder="Email" class="form-control input-md"  type="text" value="{{employee.email}}">
+      
+    </div>
+</div>
+
+<div class="form-group">
+  <label class="col-md-4 .padding-0 control-label" for="salary">Lương theo giờ</label>  
+  <div class="col-md-3 .padding-0">
+  <input id="salary" name="salary" placeholder="Lương" class="form-control input-md"    type="text" value="{{employee.salary}}">
+    
+  </div>
+</div>
+
+<button type="button" class="btn btn-primary col-md-2" onclick={updateUser()}>Cập nhật</button>
+<button type="button" class="btn btn-danger col-md-2" onclick={deleteUser()}>Xóa</button>
+</div>
+</form>
+<br>
+<br>
+  <table class="table">
+          </form>
+        <thead>
+          <tr>
+            <th scope="col">Ngày</th>
+            <th scope="col">Giờ bắt đầu</th>
+            <th scope="col">Giờ kết thúc</th>
+            <th scope="col">Tổng giờ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%for log in logs%}
+          <tr>
+            <th scope="row">{{log.date|date:"M d, Y"}}</th>
+            <td>{{log.from_hour |time:"h:i a"}}</td>
+            <td>{{log.to_hour | time:"h:i a"}}</td>
+            <td>{{log.hour}} tiếng</td>
+            <td><a href="/admin/tracking/logtime/{{log.id}}/change">Sửa</a></td>
+            <td><button type="button" onclick={deleteLog({{log.id}})} class="btn btn-danger">
+              Xóa
+            </button></td>
+          </tr>
+          {%endfor%}
+    
+        </tbody>
+      </table>
+
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Logtime</h5>
+        
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="inputDate1">Ngày làm việc</label>
+          <input type="date" class="form-control" id="inputDate" name="from" placeholder="Giờ bắt đầu">
+        </div>
+ 
+
+        <div class="form-group">
+          <label for="inputDate3">Từ</label>
+          <input type="time" class="form-control" id="inputHour3" name="from_hour" placeholder="8h 30m">
+        </div>
+        <div class="form-group">
+          <label for="inputDate4">Đến</label>
+          <input type="time" class="form-control" id="inputHour4" name="to_hour" placeholder="8h 30m">
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button"  class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        <input type="button" class="btn btn-primary" data-dismiss="modal" onclick="updateLogTime()" value="Lưu">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  
+  const updateUser = () => {
+  let data = new FormData();
+  const name = document.getElementById('name').value
+  const phone = document.getElementById('phone').value
+  const email = document.getElementById('email').value
+  const salary = document.getElementById('salary').value
+  axios.defaults.xsrfCookieName = 'csrftoken'
+  axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
+  data.append("name", name);
+  data.append("phone", phone);
+  data.append("email", email);
+  data.append("salary", salary);
+
+  axios({
+    method: 'patch',
+    url: '/employee/{{employee.id}}/',
+    data: data,
+    dataType: "json",
+  });
+  alert('Cập nhật thành công')
+  window.location.href="/employee/{{employee.id}}/log-times/"
+  }
+
+  const deleteUser = () => {
+    if (confirm("Bạn có chắc chắn muốn xóa!")) {
+      axios.defaults.xsrfCookieName = 'csrftoken'
+      axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+      axios({
+      method: 'delete',
+      url: '/employee/{{employee.id}}/',
+      });
+
+      window.location.href="/"} 
+      else {
+
+      }
+    
+
+
+
+  }
+  let logId, date, from_hour, to_hour
+
+  const setLog = (id) => {
+    logId = id
+
+    {% comment %} document.getElementById('inputDate').value = date {% endcomment %}
+    {% comment %} document.getElementById('inputHour3').value = from_hour
+    document.getElementById('inputHour4').value = to_hour {% endcomment %}
+
+  }
+
+  {% comment %} const updateLogTime = () => {
+    let data = new FormData();
+    const date = document.getElementById('inputDate').value
+    const from_hour = document.getElementById('inputHour3').value
+    const to_hour = document.getElementById('inputHour4').value
+    data.append("date", date);
+    data.append("from_hour", from_hour);
+    data.append("to_hour", to_hour  );
+    axios.defaults.xsrfCookieName = 'csrftoken'
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
+    axios({
+      method: 'patch',
+      url: `/log-time/${logId}`,
+      data: data,
+      dataType: "json",
+    });
+
+  } {% endcomment %}
+  const deleteLog = (id) => {
+    axios.defaults.xsrfCookieName = 'csrftoken'
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+    axios({
+      method: 'delete',
+      url: `/log-time/${id}/`,
+      dataType: "json",
+    });
+
+    window.location.href="/employee/{{employee.id}}/log-times/"
+
+  }
+</script>
+{%endblock%}

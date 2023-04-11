@@ -1,0 +1,67 @@
+{% extends "tracking/base.html" %}
+
+{% block content %}
+<script type="text/javascript">
+
+
+  const createUser = (event) => {
+  event.preventDefault()
+  let data = new FormData();
+  const name = document.getElementById('name').value;
+  const contact = document.getElementById('contact').value;
+  const email = document.getElementById('email').value;
+  const salary = document.getElementById('salary').value;
+
+  data.append("name", name);
+  data.append("contact", contact);
+  data.append("email", email);
+  data.append("salary", salary);
+  axios.defaults.xsrfCookieName = 'csrftoken'
+  axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+  axios({
+    method: 'post',
+    url: '/employee/',
+    data: data,
+    dataType: "json",
+  });
+  location.replace("http://127.0.0.1:8000/")
+
+}
+</script>
+<legend>Tạo nhân viên</legend>
+<form class="form-horizontal">
+<div class="form-group">
+  <label class="col-md-4 control-label" for="product_name">Tên nhân viên</label>  
+  <div class="col-md-4">
+  <input id="name"  placeholder="Họ và tên" class="form-control input-md"  type="text">
+  </div>
+</div>      
+<div class="form-group">
+    <label class="col-md-4 control-label" for="product_name">Số điện thoại</label>  
+    <div class="col-md-4">
+    <input id="contact"  placeholder="Số di động" class="form-control input-md" type="text">
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-md-4 control-label" for="product_name">Email</label>  
+    <div class="col-md-4">
+    <input id="email" placeholder="Email" class="form-control input-md"  type="text">
+    </div>
+  </div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="salary">Lương theo giờ</label>  
+  <div class="col-md-4">
+    <input id="salary"  placeholder="Lương" class="form-control input-md"    type="text">  
+  </div>
+</div>
+<div class="form-group">
+    <div class="col-md-4">
+      <button  onclick="createUser(event)" class="btn btn-primary">Thêm</button>
+    </div>
+  </div>
+
+</form>
+
+{%endblock%}

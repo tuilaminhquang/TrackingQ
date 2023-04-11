@@ -1,0 +1,109 @@
+{% extends "tracking/base.html" %}
+{% block title %} Hien Nha Coffee {% endblock title%}
+{% block content %}
+<script type="text/javascript">
+    var employee
+    const setEmployee = (employeeId) => {
+        employee = employeeId
+    }
+  
+    const logTime = () => {
+    let data = new FormData();
+    const date = document.getElementById('inputDate').value
+    const from_hour = document.getElementById('inputHour3').value
+    const to_hour = document.getElementById('inputHour4').value
+
+    data.append("date", date);
+    data.append("employee_id", employee);
+    data.append("from_hour", from_hour);
+    data.append("to_hour", to_hour  );
+
+    axios({
+      method: 'post',
+      url: '/logtime/',
+      data: data,
+      dataType: "json",
+    });
+
+  }
+</script>
+
+<table class="table">
+  <form method="get">
+  {% csrf_token %}
+  <div class="d-flex  justify-content-between align-items-center">
+    <div class="col-md-5">
+      <label for="search" class="mt-3">Tìm kiếm nhân viên:</label>
+      <input type="search" class="form-control" id="search" placeholder="Nhập tên nhân viên" name="search"> 
+    </div>
+    <a href="/employee/create" class="btn btn-primary">Thêm nhân viên</a>  
+  </div>
+
+  </form>
+    <thead>
+      <tr>
+        <th scope="col">STT</th>
+        <th scope="col">Tên</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Email</th>
+        <!-- <th scope="col">Lương</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      {%for e in employee%}
+      <tr>
+        <th scope="row">{{e.id}}</th>
+        <td>{{e.name}}</td>
+        <td>{{e.contact}}</td>
+        <td>{{e.email}}</td>
+        <!-- <td>{{e.salary}}</td> -->
+        <td></td>
+        <td><button type="button" onclick={setEmployee({{e.id}})} class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          Logtime
+        </button>
+        <td>
+        <a href="employee/{{e.id}}/log-times/">
+          Chi tiết
+        </a>
+        </td>
+      </tr>
+      {%endfor%}
+
+    </tbody>
+  </table>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Logtime</h5>
+        
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="inputDate1">Ngày làm việc</label>
+          <input type="date" class="form-control" id="inputDate" name="from" placeholder="Giờ bắt đầu">
+        </div>
+ 
+
+        <div class="form-group">
+          <label for="inputDate3">Từ</label>
+          <input type="time" class="form-control" id="inputHour3" name="from_hour" placeholder="8h 30m">
+        </div>
+        <div class="form-group">
+          <label for="inputDate4">Đến</label>
+          <input type="time" class="form-control" id="inputHour4" name="to_hour" placeholder="8h 30m">
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button"  class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        <input type="button" class="btn btn-primary" data-dismiss="modal" onclick="logTime()" value="Lưu">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
