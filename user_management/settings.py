@@ -185,17 +185,3 @@ TIME_INPUT_FORMATS = [
     "%H:%M:%S.%f",  # '14:30:59.000200'
     "%H:%M",  # '14:30'
 ]
-import os
-from django.core.wsgi import get_wsgi_application
-import socketio
-import eventlet
-import eventlet.wsgi
-from django.contrib.staticfiles.handlers import StaticFilesHandler
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
-django_app = StaticFilesHandler(get_wsgi_application())
-sio = socketio.Server(cors_allowed_origins="*")
-
-application = socketio.Middleware(sio, wsgi_app=django_app, socketio_path="socket.io")
-
-eventlet.wsgi.server(eventlet.listen(("", 8000)), application)
