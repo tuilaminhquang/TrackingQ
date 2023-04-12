@@ -18,14 +18,14 @@
   data.append("salary", salary);
   axios.defaults.xsrfCookieName = 'csrftoken'
   axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
-  axios({
-    method: 'post',
-    url: '/employee/',
-    data: data,
-    dataType: "json",
+  
+  axios.post('/employee/', data)
+  .then(function (response) {
+    location.replace(`{% url 'users-home' %}`)
+  })
+  .catch(function (error) {
+    console.log(error);
   });
-  location.replace(`{% url 'users-home' %}`)
-
 }
 </script>
 <legend>Tạo nhân viên</legend>

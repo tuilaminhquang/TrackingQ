@@ -148,12 +148,15 @@
     if (confirm("Bạn có chắc chắn muốn xóa!")) {
       axios.defaults.xsrfCookieName = 'csrftoken'
       axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
-      axios({
-      method: 'delete',
-      url: '/employee/{{employee.id}}/',
+      
+      axios.delete('/employee/{{employee.id}}/')
+      .then(function (response) {
+        window.location.href="/"
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-
-      window.location.href="/"} 
+    } 
       else {
 
       }
@@ -173,36 +176,19 @@
 
   }
 
-  {% comment %} const updateLogTime = () => {
-    let data = new FormData();
-    const date = document.getElementById('inputDate').value
-    const from_hour = document.getElementById('inputHour3').value
-    const to_hour = document.getElementById('inputHour4').value
-    data.append("date", date);
-    data.append("from_hour", from_hour);
-    data.append("to_hour", to_hour  );
-    axios.defaults.xsrfCookieName = 'csrftoken'
-    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
-
-    axios({
-      method: 'patch',
-      url: `/log-time/${logId}`,
-      data: data,
-      dataType: "json",
-    });
-
-  } {% endcomment %}
+   
   const deleteLog = (id) => {
     axios.defaults.xsrfCookieName = 'csrftoken'
     axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
-    axios({
-      method: 'delete',
-      url: `/log-time/${id}/`,
-      dataType: "json",
+    
+    axios.delete( `/log-time/${id}/`)
+    .then(function (response) {
+      window.location.href="/employee/{{employee.id}}/log-times/"
+    })
+    .catch(function (error) {
+      console.log(error);
     });
-
-    window.location.href="/employee/{{employee.id}}/log-times/"
-
   }
+
 </script>
 {%endblock%}
