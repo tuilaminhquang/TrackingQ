@@ -72,7 +72,7 @@
   if (mm < 10) mm = '0' + mm;
   formattedCurrentDay = yyyy + '-' + mm + '-' + dd;
   const exportExcel = () => {
-    window.open(`http://127.0.0.1:8000/chart-view/?start_date=${formattedCurrentDay}&export_excel=true`);
+    window.open(`{% url 'chart-logs-view' %}?start_date=${formattedCurrentDay}&export_excel=true`);
 
   }
 

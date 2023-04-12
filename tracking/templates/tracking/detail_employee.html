@@ -141,8 +141,8 @@
     dataType: "json",
   });
   alert('Cập nhật thành công')
-  window.location.href="/employee/{{employee.id}}/log-times/"
-  }
+  location.reload();
+}
 
   const deleteUser = () => {
     if (confirm("Bạn có chắc chắn muốn xóa!")) {
