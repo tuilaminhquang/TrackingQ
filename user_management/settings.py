@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import dj_database_url
+from dotenv import load_dotenv
 import os
 from pathlib import Path
 import environ
@@ -16,7 +18,6 @@ import environ
 env = environ.Env()
 environ.Env.read_env()
 # To keep secret keys in environment variables
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -96,7 +97,6 @@ WSGI_APPLICATION = "user_management.wsgi.application"
 #         "PORT": "",
 #     }
 # }
-import dj_database_url
 DATABASES = {
     "default": dj_database_url.parse(env.str("DATABASE_URL"))
 }
