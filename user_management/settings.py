@@ -32,9 +32,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = str(os.getenv("SECRET_KEY"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -97,9 +97,7 @@ WSGI_APPLICATION = "user_management.wsgi.application"
 #         "PORT": "",
 #     }
 # }
-DATABASES = {
-    "default": dj_database_url.parse(env.str("DATABASE_URL"))
-}
+DATABASES = {"default": dj_database_url.parse(env.str("DATABASE_URL"))}
 
 
 # Password validation
@@ -180,10 +178,24 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 TIME_INPUT_FORMATS = [
-    '%I:%M:%S %p',  # 6:22:44 PM
-    '%I:%M %p',  # 6:22 PM
-    '%I %p',  # 6 PM
-    '%H:%M:%S',     # '14:30:59'
-    '%H:%M:%S.%f',  # '14:30:59.000200'
-    '%H:%M',        # '14:30'
+    "%I:%M:%S %p",  # 6:22:44 PM
+    "%I:%M %p",  # 6:22 PM
+    "%I %p",  # 6 PM
+    "%H:%M:%S",  # '14:30:59'
+    "%H:%M:%S.%f",  # '14:30:59.000200'
+    "%H:%M",  # '14:30'
 ]
+import os
+from django.core.wsgi import get_wsgi_application
+import socketio
+import eventlet
+import eventlet.wsgi
+from django.contrib.staticfiles.handlers import StaticFilesHandler
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
+django_app = StaticFilesHandler(get_wsgi_application())
+sio = socketio.Server(cors_allowed_origins="*")
+
+application = socketio.Middleware(sio, wsgi_app=django_app, socketio_path="socket.io")
+
+eventlet.wsgi.server(eventlet.listen(("", 8000)), application)

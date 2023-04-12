@@ -44,8 +44,6 @@ urlpatterns = [
     path("password-change/", ChangePasswordView.as_view(), name="password_change"),
     re_path(r"^oauth/", include("social_django.urls", namespace="social")),
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
-else:
-    urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += staticfiles_urlpatterns()
+print(staticfiles_urlpatterns())
